@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import Card from './components/Card'
 import { getAllPokemon, getPokemon } from './utils/pokemon'
 
 function App() {
@@ -32,7 +33,17 @@ function App() {
 
   return (
     <div className="App">
-      {isLoading ? <h1>読み込み中です</h1> : <h1>読み込み終了しました</h1>}
+      {isLoading ? (
+        <h1>読み込み中です</h1>
+      ) : (
+        <>
+          <div className="pokemonCardContainer">
+            {pokemonData.map((pokemon, i) => {
+              return <Card key={i} pokemon={pokemon} />
+            })}
+          </div>
+        </>
+      )}
     </div>
   )
 }
