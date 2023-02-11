@@ -7,6 +7,7 @@ function App() {
   const initialURL = 'https://pokeapi.co/api/v2/pokemon'
   const [isLoading, setIsLoading] = useState(true)
   const [pokemonData, setPokemonData] = useState([])
+  const [prevURL, setPrevURL] = useState()
   const [nextURL, setNextURL] = useState()
 
   const loadPokemon = async (data) => {
@@ -23,9 +24,8 @@ function App() {
   useEffect(() => {
     const fetchPokemonData = async () => {
       let res = await getAllPokemon(initialURL)
-      console.log('🚀 ~ file: App.js:30 ~ fetchPokemonData ~ res', res)
-      console.log('🚀 ~ file: App.js:30 ~ fetchPokemonData ~ res', res.next)
       loadPokemon(res.results)
+      setPrevURL(res.previous)
       setNextURL(res.next)
     }
 
@@ -33,16 +33,25 @@ function App() {
     setIsLoading(false)
   }, [])
 
-  const handlePrevPage = () => {}
+  const handlePrevPage = async () => {
+    setIsLoading(true)
+
+    let data = await getAllPokemon(prevURL)
+
+    await loadPokemon(data.results)
+    setNextURL(data.next)
+    setPrevURL(data.previous)
+    setIsLoading(false)
+  }
 
   const handleNextPage = async () => {
     setIsLoading(true)
 
     let data = await getAllPokemon(nextURL)
-    console.log('🚀 ~ file: App.js:31 ~ handleNextPage ~ data', data)
 
     await loadPokemon(data.results)
     setNextURL(data.next)
+    setPrevURL(data.previous)
     setIsLoading(false)
   }
 
@@ -64,17 +73,21 @@ function App() {
           )}
         </div>
 
-        <div className="container m-auto my-5   flex gap-2 justify-center">
-          <button
-            onClick={handlePrevPage}
-            className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-            Prev
-          </button>
-          <button
-            onClick={handleNextPage}
-            className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-            Next
-          </button>
+        <div className="container m-auto my-5 flex gap-2 justify-center">
+          {prevURL ? (
+            <button
+              onClick={handlePrevPage}
+              className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+              Prev
+            </button>
+          ) : null}
+          {nextURL ? (
+            <button
+              onClick={handleNextPage}
+              className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+              Next
+            </button>
+          ) : null}
         </div>
       </div>
     </>
