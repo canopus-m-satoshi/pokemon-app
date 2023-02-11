@@ -1,6 +1,6 @@
 const Card = ({ pokemon }) => {
   const { name, sprites, types, weight, height, abilities } = pokemon
-  console.log('🚀 ~ file: Card.js:2 ~ Card ~ pokemon', pokemon)
+
   return (
     <div className="border drop-shadow-lg bg-white py-2 px-5">
       <div>
